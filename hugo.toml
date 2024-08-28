@@ -1,4 +1,60 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = 'cactus'
+baseURL = 'https://tomdvies.com/'
+languageCode = 'en-GB'
+title = 'tomdvies.com'
+
+[[menus.main]]
+name = 'blog'
+pageRef = '/'
+weight = 10
+
+[[menus.main]]
+name = 'about'
+pageRef = '/about'
+weight = 20
+
+[[menus.main]]
+name = 'github'
+url = 'https://github.com/tomdvies'
+weight = 5
+
+#[[menus.main]]
+#name = 'Tags'
+#pageRef = '/tags'
+#weight = 30
+
+[module]
+  [module.hugoVersion]
+    extended = false
+    min = "0.116.0"
+
+
+[markup]
+  [markup.highlight]
+        style = 'onesenterprise'
+        codeFences = true
+        guessSyntax = false
+        lineAnchors = ''
+        lineNoStart = 1
+        tabWidth = 4
+        lineNos = true
+        lineNumbersInTable = false
+        anchorLineNos = false
+        hl_inline = false
+        noClasses = true
+        noHl = false
+
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+  [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+
+[params]
+  math = true
+
+

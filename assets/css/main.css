@@ -1,0 +1,153 @@
+/*body {
+  color: #222;
+  font-family: sans-serif;
+  line-height: 1.5;
+  margin: 1rem;
+  max-width: 768px;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+header {
+  border-bottom: 1px solid #222;
+  margin-bottom: 1rem;
+}
+
+footer {
+  border-top: 1px solid #222;
+  margin-top: 1rem;
+}
+
+a {
+  color: #00e;
+  text-decoration: none;
+}
+*/
+
+
+.content {
+  margin-bottom: 4em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  padding: 0 1ch;
+  word-wrap: break-word;
+}
+body {
+  font-family: monospace;
+  font-size: 110%;
+  background-color: white;
+  color: #111;
+  width: 80%;
+  min-width: 300px;
+  min-height: 200px;
+  padding: 1em;
+  margin: 3% 10%;
+  border: thin solid gray;
+  border-radius: 5px;
+  display: block;
+}
+[class*="col-"] {
+  width: 100%;
+}
+
+@media only screen and (orientation: portrait) {
+  body {
+  font-family: monospace;
+  font-size: 110%;
+  background-color: white;
+  color: #111;
+  width: 95%;
+  min-width: 300px;
+  min-height: 200px;
+  padding: 1em;
+  margin: 1% 1%;
+  border: none;
+  display: block;
+  }
+}
+a:link    { color: blue; text-decoration: none;      }
+a:hover   { color: blue; text-decoration: underline; }
+a:visited { color: blue;                             }
+
+h1 a { color: inherit !important }
+h2 a { color: inherit !important }
+h3 a { color: inherit !important }
+h4 a { color: inherit !important }
+h5 a { color: inherit !important }
+h6 a { color: inherit !important }
+
+#menu li {
+    display: inline;
+}
+
+#post-list {
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+pre {
+    margin: 2em 1em 2em 4em;
+    white-space: pre-wrap;
+}
+
+nav {
+    padding: 0 0 ;
+}
+nav ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0;
+    overflow: hidden;
+}
+
+nav a {
+    font-size: 140%;
+    display: block;
+    padding: 0px;
+}
+
+.nav-left {
+    float: left;
+}
+
+.nav-left ul li {
+    float: left;
+}
+
+.nav-right ul li {
+    float: right;
+    padding: 0px 0px 0px 40px;
+    
+}
+
+h1, h2, h3 { font-weight: normal; }
+
+code,
+blockquote {
+  display: block;
+  max-width: 100%;
+  position: relative;
+  text-wrap: break-word;
+  border: thin solid gray;
+  border-radius: 5px;
+  padding: 3px 2px;
+}
+
+.highlight pre  {
+  margin: 1em;
+}
+
+.hr {
+  border: thin solid gray;
+  border-width: thin 0px 0px 0px;
+  /*height: 1px;
+  /* Set the hr color */
+  /*color: gray;  /* old IE */
+  /*background-color: gray;  /* Modern Browsers */
+}
