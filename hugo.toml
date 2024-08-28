@@ -4,7 +4,7 @@ title = 'tomdvies.com'
 
 [[menus.main]]
 name = 'blog'
-pageRef = '/'
+pageRef = '/blogs'
 weight = 10
 
 [[menus.main]]

@@ -8,10 +8,6 @@
   display: table-cell;
 }
 
-html {
-    display: table;
-    margin: auto;
-}
 
 header {
   border-bottom: 1px solid #222;
@@ -30,12 +26,15 @@ a {
 */
 
 
+html {
+    margin: auto;
+}
 .content {
   margin-bottom: 4em;
   margin-left: auto;
   margin-right: auto;
   max-width: 800px;
-  padding: 0 1ch;
+  padding: 0 0ch;
   word-wrap: break-word;
 }
 body {
@@ -43,11 +42,11 @@ body {
   font-size: 110%;
   background-color: white;
   color: #111;
-  width: 80%;
+  width: 77%;
   min-width: 300px;
   min-height: 200px;
-  padding: 1em;
-  margin: 3% 10%;
+  padding: 1em 1em 0em 1em;
+  margin: 2% 10%;
   border: thin solid gray;
   border-radius: 5px;
   display: block;
@@ -71,9 +70,12 @@ body {
   display: block;
   }
 }
+.active {
+    color: black !important;
+}
 a:link    { color: blue; text-decoration: none;      }
 a:hover   { color: blue; text-decoration: underline; }
-a:visited { color: blue;                             }
+a:visited { color: blue;}
 
 h1 a { color: inherit !important }
 h2 a { color: inherit !important }
@@ -107,7 +109,7 @@ nav ul {
 }
 
 nav a {
-    font-size: 140%;
+    font-size: 1.27em;
     display: block;
     padding: 0px;
 }
@@ -118,15 +120,16 @@ nav a {
 
 .nav-left ul li {
     float: left;
+ font-weight: bold;
 }
 
 .nav-right ul li {
     float: right;
-    padding: 0px 0px 0px 40px;
-    
+    padding: 0px 0px 0px 3em;
+    font-weight: bold; 
 }
 
-h1, h2, h3 { font-weight: normal; }
+h1, h2, h3 { font-weight: bold; }
 
 code,
 blockquote {
@@ -150,4 +153,12 @@ blockquote {
   /* Set the hr color */
   /*color: gray;  /* old IE */
   /*background-color: gray;  /* Modern Browsers */
+}
+
+.header__inline h4, .header__inline h3, .header__inline time, .header__inline a {
+    display: inline;
+}
+
+.header__inline {
+    display:block;
 }

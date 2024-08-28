@@ -1,15 +1,26 @@
 <header>
+{{ $currentPage := . }}
 <nav>
     <div class="nav-left">
         <ul>
-            <li><a href="/">{{ site.Title }}</a></li>
+            <li><a href="/" 
+{{if $currentPage.IsHome}}
+  class="active"
+{{ end }}
+>{{ site.Title }}</a></li>
             <!--<li><a href=".">{{ lower .Title }}</a></li>-->
         </ul>
     </div>
     <div class="nav-right">
         <ul>
             {{ range .Site.Menus.main }}
-            <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+            <li><a href="{{ .URL }}"
+                   {{ with .Page }}
+                    {{if (.Eq $currentPage)}}
+                    class="active"
+                    {{ end }}
+                    {{end}}
+                    >{{ .Name }}</a></li>
             {{ end }}
         </ul>
     </div>
