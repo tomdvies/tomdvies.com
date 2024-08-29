@@ -54,7 +54,7 @@ This tells hugo, to convert the block/ inline latex respectively. We also need t
       [markup.goldmark.parser.attribute]
         block = true
 ```
-This allows us to use the \\( \\) delimiters for inline latex, and \$$ \$$, \\[\\] for block latex. 
+This allows us to use the `\( \)` delimiters for inline latex, and `$$ $$`, `\[ \]` for block latex. 
 Finally, I added the katex css file to *layouts/partials/head.html*, this is required for server side rendered katex to display properly.
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
@@ -78,3 +78,12 @@ Note that if you refresh the page, there isn't the lag where you can see the raw
 to being done (this was the only "frill" I wanted my site to have). Now we can work on *themeing* the site.
 
 ### Customise your css/ layouts
+Now you just have free reign over what you want on your site & where, I only wanted 3 main sections, [about]({{< ref "about">}}), [blogs]({{< ref "blogs">}}), and a link to my [github]("https://github.com/tomdvies").
+So I just put them into the *llayouts/_default* folder, and specified their layout in the relevant md file with `layout = 'about'` in the header.
+
+For css, I ripped the [basic](https://github.com/getpelican/pelican-themes/tree/master/basic) theme for pelican, and made my own modifications for things like code blocks.
+I also pulled the [Cousine](https://github.com/getpelican/pelican-themes/tree/master/basic) font from google fonts, as I just wanted a simple monospaced font.
+
+All in all, this is definitely not using the many powerful features of Hugo, however it does give me a website that I can clone anywhere and build with no dependencies other than Hugo. 
+It took me a bit to figure out integrating the katex, so I thought I would write all this up here as the first blog post I wrote for this site.
+
