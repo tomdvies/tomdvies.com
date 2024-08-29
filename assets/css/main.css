@@ -180,6 +180,10 @@ blockquote {
     font-weight: bold;
 }
 
+.blogtime{
+    font-weight: bold;
+}
+
 .header__inline {
     display:block;
 }

@@ -7,7 +7,8 @@ draft = false
 +++
 
 I'm Tom, a 20 y/o Masters student at the University of Edinburgh, studying Statistics & Data Science. 
-For my undergrad, I studied Maths at the University of Cambridge primarily taking courses in statistics, probability, and analysis. I code (albeit poorly)
+For my undergrad, I studied Maths at the University of Cambridge primarily taking courses in Statistics, Probability, and Analysis. 
+I spend most of my free time coding, I'm primarily interested in the intersection of Mathematics, Statistics, and Computer Science.
 
 #### Me in links:
 - twitter: [tomdvies](https://twitter.com/tomdvies)
@@ -17,24 +18,44 @@ For my undergrad, I studied Maths at the University of Cambridge primarily takin
 - My username on most other platforms is ***tomdvies***
 
 #### Current interests:
-- High Dimensional and Computational Statistics
+- High Dimensional, and Computational Statistics
 - Machine learning
 - Statistical Learning Theory
 - iOS Tweaks and Dev tools for jailbroken devices
 - Reverse engineering
 - Computational modelling
 - Numerical Analysis
+- Crypto, particularly 
 
 #### Languages & Skills:
 
 - Python
 - C++ & C
 - Rust
+- MatLab
 - Objective C (mainly in the context of jailbreaking)
 - Binary inspection using tools like Ghidra/IDA
 - Reverse engineering of APIs
 - Webscraping
 - Linux systems administration, including shell scripting, server management, and troubleshooting
 - NeoVim
+
+#### Notable courses studied:
+- Analysis & Topology
+- Linear Algebra
+- Probability & Measure 
+- Markov Chains
+- Linear Analysis
+- Mathematics of Machine Learning
+- Applied Probability
+- Principles of Statistics
+- Principles of Quantum Mechanics
+- Groups
+- Numerical Analysis I & II
+
+#### Notable coursework completed + grades (links coming soon)
+- Discrete Fourier Transforms (93%)
+- Multigrid Methods (85%)
+- Markov Chain Monte Carlo (85%)
 
 [comment]: <> (This is a comment, it will not be included)
