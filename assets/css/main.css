@@ -160,8 +160,18 @@ blockquote {
   padding: 3px 2px;
 }
 
-.highlight pre  {
+.highlight pre{
   margin: 1em;
+}
+blockquote {
+  margin: 0.78em;
+  display: block;
+  position: relative;
+  overflow-wrap: break-word;
+  word-break: break-all;;
+  border: thin solid gray;
+  border-radius: 5px;
+  padding: 1px 0.7em 1em 0.7em;
 }
 
 .hr {
