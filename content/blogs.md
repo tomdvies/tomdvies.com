@@ -7,4 +7,4 @@ draft = false
 +++
 This is a loose collection of posts/ blogs/ written up projects by me. These are mostly for myself, however others may also find them interesting and/or useful. 
 If you have any notes feel free to [email](mailto:davies.evan.tom@gmail.com) me, or contact me via any of the other methods listed under [about]( {{< ref "about" >}}).
-I mostly work in python, rust, or C++, and all the source code for projects will be provided on my [github](https://github.com/tomdvies).
+I mostly work in python, rust, and/or C++ and all the source code for projects will be provided on my [github](https://github.com/tomdvies).

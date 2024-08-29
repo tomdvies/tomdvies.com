@@ -28,6 +28,7 @@ a {
 
 html {
     margin: auto;
+    display: table;
 }
 .content {
   margin-bottom: 4em;
@@ -37,25 +38,41 @@ html {
   padding: 0 0ch;
   word-wrap: break-word;
 }
-body {
-  font-family: monospace;
-  font-size: 110%;
+/*body {
+  display: table-cell;
+  vertical-align: middle;
+  font-family: monospace, serif;
+  /*font-family: monospace;*/
+  /*font-size: 100%;
   background-color: white;
   color: #111;
-  width: 77%;
+  width: 90%;
   min-width: 300px;
   min-height: 200px;
   padding: 1em 1em 0em 1em;
   margin: 2% 10%;
   border: thin solid gray;
   border-radius: 5px;
-  display: block;
+}*/
+body {
+    max-width: 1300px; /* Set a max-width to control the width of the body content */
+    width:90%;
+    border-radius: 7px;
+    margin: 2% auto; /* Center the body horizontally */
+    font-size: 95%;
+    border: 1px solid gray; /* Add a thin gray border */
+    padding: 1em 1em 0em 1em;
+    box-sizing: border-box; /* Ensure padding and border are included in the element's width/height */
+    /*font-family:"IBM Plex Mono","Roboto Mono","Inconsolata","Noto Sans Mono", monospace;*/
+    font-family: "Cousine", monospace;
+    background-color: white;
+    color: #111;
 }
 [class*="col-"] {
   width: 100%;
 }
 
-@media only screen and (orientation: portrait) {
+/*@media only screen and (orientation: portrait) {
   body {
   font-family: monospace;
   font-size: 110%;
@@ -68,8 +85,8 @@ body {
   margin: 1% 1%;
   border: none;
   display: block;
-  }
-}
+}*/
+
 .active {
     color: black !important;
 }
@@ -136,7 +153,8 @@ blockquote {
   display: block;
   max-width: 100%;
   position: relative;
-  text-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;;
   border: thin solid gray;
   border-radius: 5px;
   padding: 3px 2px;
@@ -157,6 +175,9 @@ blockquote {
 
 .header__inline h4, .header__inline h3, .header__inline time, .header__inline a {
     display: inline;
+}
+.header__inline time{
+    font-weight: bold;
 }
 
 .header__inline {
