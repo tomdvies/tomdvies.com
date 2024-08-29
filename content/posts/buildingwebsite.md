@@ -79,7 +79,7 @@ to being done (this was the only "frill" I wanted my site to have). Now we can w
 
 ### Customise your css/ layouts
 Now you just have free reign over what you want on your site & where, I only wanted 3 main sections, [about]({{< ref "about">}}), [blogs]({{< ref "blogs">}}), and a link to my [github]("https://github.com/tomdvies").
-So I just put them into the *llayouts/_default* folder, and specified their layout in the relevant md file with `layout = 'about'` in the header.
+So I just put them into the *layouts/_default* folder, and specified their layout in the relevant md file with `layout = 'about'` in the header.
 
 For css, I ripped the [basic](https://github.com/getpelican/pelican-themes/tree/master/basic) theme for pelican, and made my own modifications for things like code blocks.
 I also pulled the [Cousine](https://github.com/getpelican/pelican-themes/tree/master/basic) font from google fonts, as I just wanted a simple monospaced font.
