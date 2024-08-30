@@ -53,7 +53,7 @@ I spend most of my free time coding, I'm primarily interested in the intersectio
 - Groups
 - Numerical Analysis I & II
 
-#### Notable coursework completed + grades (links coming soon)
+#### Notable coursework completed + grades (links coming soon):
 - Discrete Fourier Transforms (93%)
 - Multigrid Methods (85%)
 - Markov Chain Monte Carlo (85%)
