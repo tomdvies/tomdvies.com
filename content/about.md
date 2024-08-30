@@ -25,7 +25,7 @@ I spend most of my free time coding, I'm primarily interested in the intersectio
 - Reverse engineering
 - Computational modelling
 - Numerical Analysis
-- Crypto, particularly 
+- Blockchains, particularly [mina](https://minaprotocol.com/)
 
 #### Languages & Skills:
 
