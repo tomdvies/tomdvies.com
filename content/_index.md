@@ -5,5 +5,7 @@ draft = false
 +++
 You are [here]( {{< ref "_index" >}} ), stay a while, or don't. 
 
-I'm currently studying a masters in Statistics and Data Science at the University of Edinburgh. Previously, I studied Mathematics at the University of Cambridge.
+I'm Tom, a 20 y/o Masters student at the University of Edinburgh, studying Statistics & Data Science. 
+For my undergrad, I studied Maths at the University of Cambridge primarily taking courses in Statistics, Probability, and Analysis. 
+I spend most of my free time coding, I'm primarily interested in the intersection of Mathematics, Statistics, and Computer Science.
 
