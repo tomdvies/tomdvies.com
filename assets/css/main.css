@@ -136,12 +136,12 @@ nav a {
     float: left;
 }
 
-.nav-left ul li {
+.nav-left li {
     float: left;
- font-weight: bold;
+    font-weight: bold;
 }
 
-.nav-right ul li {
+.nav-right li {
     float: right;
     padding: 0px 0px 0px 3em;
     font-weight: bold; 

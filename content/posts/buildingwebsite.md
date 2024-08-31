@@ -11,7 +11,7 @@ When looking to build this website I knew I wanted 3 things, ease of setup/ main
 If you couldn't already tell, I don't love flashy sites. 
 I'd much rather a fast loading, small, static site than some massive react esque thing that takes 10 minutes to render.
 
-I landed on [Hugo](https://gohugo.io/), it's many themes, go codebase, and positive reviews online sold me.
+I landed on [Hugo](https://gohugo.io/), it sounded fast, and there seemed to be a vast number of themes.
 However I quickly ran into an issue with finding a theme that fit my needs/ wants. This is a blog post on rectifying this. 
 If all you care about is the code, it can all be found on my [github](https://github.com/tomdvies/tomdvies.com). 
 This is also very loosely based on the blog post [hugo for fussy people](https://jnolis.com/blog/hugo_for_fussy_people/) by [Jacqueline Nolis](https://jnolis.com/).
