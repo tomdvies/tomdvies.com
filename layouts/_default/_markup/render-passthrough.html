@@ -1,6 +1,13 @@
+{{ $macros := dict 
+    "\\addBar" "\\bar{#1}"
+    "\\C" "\\mathbb{C}"
+    "\\F" "\\mathbb{F}"
+}}
 {{ if eq .Type "block" }}
-  {{ $opts := dict "displayMode" true }}
+  {{ $opts := dict "displayMode" true "macros" $macros }}
   {{ transform.ToMath .Inner $opts }}
 {{ else if eq .Type "inline"}}
-  {{ transform.ToMath .Inner }}
+  {{ $opts := dict "macros" $macros }}
+  {{- transform.ToMath .Inner $opts -}}
 {{ end }}
+{{- /* This comment removes trailing newlines. */ -}}

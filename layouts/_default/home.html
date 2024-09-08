@@ -1,7 +1,7 @@
 {{ define "main" }}
   {{ .Content }}
    <div class="title">
-  {{ $pages := where .Site.RegularPages "Section" "posts" | first 3 }}
+  {{ $pages := where .Site.RegularPages "Section" "posts" | first 5 }}
   {{ range $pages }}
   <div class="header__inline">
       {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
