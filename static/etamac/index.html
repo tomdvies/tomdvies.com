@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>etamac</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cousine:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            max-width: 1300px;
+            width: 95%;
+            border-radius: 5px;
+            margin: 2% auto;
+            font-size: 95%;
+            border: 1px solid gray;
+            padding: 1em 1em 0em 1em;
+            font-family: "Cousine", monospace;
+            background-color: white;
+            color: #111;
+        }
+        .container {
+            width: 100%;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0;
+            word-wrap: break-word;
+        }
+        #problem {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        /* Styles for all number inputs */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            text-align: center;
+            font-size: 1em;
+            padding: 1px 0.3em;
+            border: thin solid gray;
+            border-radius: 3px;
+        }
+        /* Remove spinner buttons from all number inputs */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        #answer {
+            width: 100px;
+            display: none;
+            margin: 0 auto;
+        }
+        #timer {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        #score {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        #startBtn {
+            font-size: 1.1em;
+            padding: 4px 12px;
+            background-color: white;
+            color: #111;
+            border: thin solid gray;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 10px 0 20px 0;
+            font-family: inherit;
+        }
+        #startBtn:hover, #endBtn:hover {
+            text-decoration: underline;
+        }
+        #endBtn {
+            font-size: 1.1em;
+            padding: 4px 12px;
+            background-color: white;
+            color: #111;
+            border: thin solid gray;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 10px 0 20px 0;
+            font-family: inherit;
+            display: none;
+        }
+            .config-screen {
+                margin-bottom: 20px;
+            }
+            .operation-select {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .operation-btn {
+                padding: 4px 8px;
+                border: thin solid gray;
+                background: white;
+                border-radius: 3px;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 1.1em;
+            }
+            .operation-btn.selected {
+                background: #111;
+                color: white;
+            }
+            .range-select {
+                margin: 10px auto;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .range-select label, .time-select label {
+                display: block;
+                margin: 8px 0;
+                white-space: nowrap;
+            }
+                        .config-screen input[type="number"] {
+            width: 80px;
+            margin: 0 5px;
+                        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>etamac</h1>
+        <div class="config-screen" id="configScreen">
+            <div class="operation-select">
+                <button class="operation-btn selected" data-op="addition">Addition</button>
+                <button class="operation-btn" data-op="subtraction">Subtraction</button>
+                <button class="operation-btn" data-op="multiplication">Multiplication</button>
+                <button class="operation-btn" data-op="division">Division</button>
+                <button class="operation-btn" data-op="kelly">Kelly Calculator</button>
+            </div>
+            <div class="range-select">
+                <div id="mathInputs">
+                    <label>
+                        Minimum Number:
+                        <input type="number" id="minNum" value="2" min="1" max="999">
+                    </label>
+                    <label>
+                        Maximum Number:
+                        <input type="number" id="maxNum" value="99" min="1" max="999">
+                    </label>
+                </div>
+                <div id="kellyInputs" style="display: none;">
+                    <label>
+                        Minimum Win Probability (%):
+                        <input type="number" id="minWinProb" value="51" min="1" max="99">
+                    </label>
+                    <label>
+                        Maximum Win Probability (%):
+                        <input type="number" id="maxWinProb" value="95" min="1" max="99">
+                    </label>
+                    <label>
+                        Minimum Decimal Odds:
+                        <input type="number" id="minDecimalOdds" value="1.01" min="1.01" step="0.01">
+                    </label>
+                    <label>
+                        Maximum Decimal Odds:
+                        <input type="number" id="maxDecimalOdds" value="3.00" min="1.01" step="0.01">
+                    <label>
+                        Tolerance (±%):
+                        <input type="number" id="kellyTolerance" value="0.5" min="0.1" max="5" step="0.1">
+                    </label>
+                    </label>
+                </div>
+                <div class="time-select">
+                    <label>
+                        Time (seconds):
+                        <input type="number" id="timeInput" value="60" min="10" max="300">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div id="timer" style="display: none;">Time: 60s</div>
+        <div id="score" style="display: none;">Score: 0</div>
+        <div id="problem">Configure options and press Start</div>
+        <input type="number" id="answer" placeholder="Answer" disabled>
+        <button id="endBtn">End Game</button>
+        <button id="startBtn">Start Game</button>
+        <br>
+    </div>
+
+    <script>
+        let timeLeft = 60;
+        let score = 0;
+        let timer;
+        let currentProblem = {};
+        let isGameRunning = false;
+        let selectedOperations = ['addition'];
+        let minNumber = 2;
+        let maxNumber = 99;
+        let gameTime = 60;
+        let isKellyMode = false;
+
+        // Operation button listeners
+        document.querySelectorAll('.operation-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.op === 'kelly') {
+                    // Kelly mode is exclusive
+                    document.querySelectorAll('.operation-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedOperations = ['kelly'];
+                    document.getElementById('mathInputs').style.display = 'none';
+                    document.getElementById('kellyInputs').style.display = 'block';
+                    isKellyMode = true;
+                } else {
+                    if (isKellyMode) {
+                        document.querySelectorAll('.operation-btn[data-op="kelly"]').forEach(b => b.classList.remove('selected'));
+                        document.getElementById('mathInputs').style.display = 'block';
+                        document.getElementById('kellyInputs').style.display = 'none';
+                        isKellyMode = false;
+                    }
+                    btn.classList.toggle('selected');
+                    selectedOperations = Array.from(document.querySelectorAll('.operation-btn:not([data-op="kelly"]).selected'))
+                        .map(b => b.dataset.op);
+                    if (selectedOperations.length === 0) {
+                        btn.classList.add('selected');
+                        selectedOperations = [btn.dataset.op];
+                    }
+                }
+            });
+        });
+
+        // Range input listeners
+        document.getElementById('minNum').addEventListener('change', (e) => {
+            minNumber = parseInt(e.target.value);
+        });
+        document.getElementById('maxNum').addEventListener('change', (e) => {
+            });
+            
+            document.getElementById('timeInput').addEventListener('change', (e) => {
+                gameTime = parseInt(e.target.value);
+            maxNumber = parseInt(e.target.value);
+        });
+
+        const startBtn = document.getElementById('startBtn');
+        const timerDisplay = document.getElementById('timer');
+        const scoreDisplay = document.getElementById('score');
+        const problemDisplay = document.getElementById('problem');
+        const answerInput = document.getElementById('answer');
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+function generateKellyProblem() {
+    const minWinProb = parseInt(document.getElementById('minWinProb').value);
+    const maxWinProb = parseInt(document.getElementById('maxWinProb').value);
+    const minOdds = parseFloat(document.getElementById('minDecimalOdds').value) * 100;
+    const maxOdds = parseFloat(document.getElementById('maxDecimalOdds').value) * 100;
+    
+    const winProb = getRandomNumber(minWinProb, maxWinProb) / 100;
+    const decimalOdds = getRandomNumber(Math.floor(minOdds), Math.floor(maxOdds)) / 100;
+    
+    const q = 1 - winProb;
+    const b = decimalOdds - 1;
+    
+    const kellyFraction = (winProb * b - q) / b;
+    const kellySuggestion = Math.max(0, kellyFraction);
+    
+    return { 
+        suggestion: (kellySuggestion * 100).toFixed(1),
+        prob: (winProb * 100).toFixed(1),
+        odds: decimalOdds.toFixed(2)
+    };
+}
+
+
+        function generateProblem() {
+            const operation = selectedOperations[Math.floor(Math.random() * selectedOperations.length)];
+            let num1, num2, answer, symbol;
+
+            switch (operation) {
+                case 'addition':
+                    num1 = getRandomNumber(minNumber, maxNumber);
+                    num2 = getRandomNumber(minNumber, maxNumber);
+                    answer = num1 + num2;
+                    symbol = '+';
+                    break;
+                case 'subtraction':
+                    num1 = getRandomNumber(minNumber, maxNumber);
+                    num2 = getRandomNumber(minNumber, num1); // Ensure positive result
+                    answer = num1 - num2;
+                    symbol = '-';
+                    break;
+                case 'multiplication':
+                    num1 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
+                    num2 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
+                    answer = num1 * num2;
+                    symbol = '×';
+                    break;
+                case 'division':
+                    num2 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
+                    answer = getRandomNumber(minNumber, Math.min(maxNumber, 12));
+                    num1 = num2 * answer; // Ensure clean division
+                    symbol = '÷';
+                    break;
+            }
+
+            return { num1, num2, answer, symbol };
+        }
+
+        function displayProblem() {
+            if (isKellyMode) {
+                currentProblem = generateKellyProblem();
+                problemDisplay.textContent = `What is the Kelly bet % if win prob is ${currentProblem.prob}% and odds are ${currentProblem.odds}`;
+                answerInput.value = '';
+                answerInput.style.display = 'block';
+                answerInput.placeholder = "Kelly %";
+            } else {
+                currentProblem = generateProblem();
+                problemDisplay.textContent = `${currentProblem.num1} ${currentProblem.symbol} ${currentProblem.num2} = ?`;
+                answerInput.value = '';
+                answerInput.style.display = 'block';
+            }
+        }
+
+        function startGame() {
+            
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('score').style.display = 'block';
+            document.getElementById('configScreen').style.display = 'none';
+            score = 0;
+            timeLeft = gameTime;
+            isGameRunning = true;
+            scoreDisplay.textContent = `Score: ${score}`;
+            startBtn.style.display = 'none';
+            endBtn.style.display = 'inline-block';
+            answerInput.style.display = 'block';
+            answerInput.disabled = false;
+            answerInput.focus();
+            displayProblem();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time: ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            isGameRunning = false;
+            answerInput.style.display = 'none';
+            answerInput.disabled = true;
+            startBtn.style.display = 'inline-block';
+            endBtn.style.display = 'none';
+            problemDisplay.textContent = `Game Over! Final Score: ${score}`;
+            startBtn.textContent = 'Play Again';
+            document.getElementById('configScreen').style.display = 'block';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('score').style.display = 'none';
+        }
+
+        answerInput.addEventListener('input', () => {
+            if (!isGameRunning) return;
+            
+            if (isKellyMode) {
+                const userAnswer = parseFloat(answerInput.value);
+                const correctAnswer = parseFloat(currentProblem.suggestion);
+                const tolerance = parseFloat(document.getElementById('kellyTolerance').value);
+                if (Math.abs(userAnswer - correctAnswer) <= tolerance) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    displayProblem();
+                }
+            } else {
+                const userAnswer = parseInt(answerInput.value);
+                if (userAnswer === currentProblem.answer) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    displayProblem();
+                }
+            }
+        });
+
+        const endBtn = document.getElementById('endBtn');
+        endBtn.addEventListener('click', endGame);
+        startBtn.addEventListener('click', startGame);
+    </script>
+</body>
+</html>

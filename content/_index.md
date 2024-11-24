@@ -9,4 +9,6 @@ I'm Tom, a 20 y/o Masters student at the University of Edinburgh, studying Stati
 For my undergrad, I studied Maths at the University of Cambridge primarily taking courses in Statistics, Probability, and Analysis. 
 I'm interested in the intersection of Mathematics, Statistics, and Computer Science.
 
+Check out [etamac](/etamac), a small project I made for getting better at numeracy (essentially a zetamac clone).
+
 #### Recent blog posts:
