@@ -356,8 +356,8 @@
                     break;
                 case 'division':
                     // Create division problems by reversing multiplication
-                    num2 = getRandomNumber(multRightMin, multRightMax);
-                    num1 = getRandomNumber(multLeftMin, multLeftMax) * num2; // First generate the product
+                    num2 = getRandomNumber(multLeftMin, multLeftMax);
+                    num1 = getRandomNumber(multRightMin, multRightMax) * num2; // First generate the product
                     answer = num1 / num2; // The answer will be the first random number we generated
                     symbol = '÷';
                     break;
