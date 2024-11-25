@@ -152,9 +152,9 @@
         <div class="config-screen" id="configScreen">
             <div class="operation-select">
                 <button class="operation-btn selected" data-op="addition">Addition</button>
-                <button class="operation-btn" data-op="subtraction">Subtraction</button>
-                <button class="operation-btn" data-op="multiplication">Multiplication</button>
-                <button class="operation-btn" data-op="division">Division</button>
+                <button class="operation-btn selected" data-op="subtraction">Subtraction</button>
+                <button class="operation-btn selected" data-op="multiplication">Multiplication</button>
+                <button class="operation-btn selected" data-op="division">Division</button>
                 <button class="operation-btn" data-op="kelly">Kelly Calculator</button>
             </div>
             <div class="range-select">
@@ -217,7 +217,7 @@
                 <div class="time-select">
                     <label>
                         Time (seconds):
-                        <input type="number" id="timeInput" value="60" min="10" max="300">
+                        <input type="number" id="timeInput" value="120" min="10" max="300">
                     </label>
                 </div>
             </div>
@@ -232,19 +232,19 @@
     </div>
 
     <script>
-        let timeLeft = 60;
+        let timeLeft = 120;
         let score = 0;
         let timer;
         let currentProblem = {};
         let isGameRunning = false;
-        let selectedOperations = ['addition'];
+        let selectedOperations = ['addition', 'subtraction', 'multiplication', 'division'];
         let minNumber = 2;
         let multLeftMin = 2;
         let multLeftMax = 12;
         let multRightMin = 2;
         let multRightMax = 100;
         let maxNumber = 100;
-        let gameTime = 60;
+        let gameTime = 120;
         let isKellyMode = false;
 
         // Operation button listeners
