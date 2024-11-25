@@ -308,27 +308,27 @@
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-function generateKellyProblem() {
-    const minWinProb = parseInt(document.getElementById('minWinProb').value);
-    const maxWinProb = parseInt(document.getElementById('maxWinProb').value);
-    const minOdds = parseFloat(document.getElementById('minDecimalOdds').value) * 100;
-    const maxOdds = parseFloat(document.getElementById('maxDecimalOdds').value) * 100;
-    
-    const winProb = getRandomNumber(minWinProb, maxWinProb) / 100;
-    const decimalOdds = getRandomNumber(Math.floor(minOdds), Math.floor(maxOdds)) / 100;
-    
-    const q = 1 - winProb;
-    const b = decimalOdds - 1;
-    
-    const kellyFraction = (winProb * b - q) / b;
-    const kellySuggestion = Math.max(0, kellyFraction);
-    
-    return { 
-        suggestion: (kellySuggestion * 100).toFixed(1),
-        prob: (winProb * 100).toFixed(1),
-        odds: decimalOdds.toFixed(2)
-    };
-}
+        function generateKellyProblem() {
+            const minWinProb = parseInt(document.getElementById('minWinProb').value);
+            const maxWinProb = parseInt(document.getElementById('maxWinProb').value);
+            const minOdds = parseFloat(document.getElementById('minDecimalOdds').value) * 100;
+            const maxOdds = parseFloat(document.getElementById('maxDecimalOdds').value) * 100;
+            
+            const winProb = getRandomNumber(minWinProb, maxWinProb) / 100;
+            const decimalOdds = getRandomNumber(Math.floor(minOdds), Math.floor(maxOdds)) / 100;
+            
+            const q = 1 - winProb;
+            const b = decimalOdds - 1;
+            
+            const kellyFraction = (winProb * b - q) / b;
+            const kellySuggestion = Math.max(0, kellyFraction);
+            
+            return { 
+                suggestion: (kellySuggestion * 100).toFixed(1),
+                prob: (winProb * 100).toFixed(1),
+                odds: decimalOdds.toFixed(2)
+            };
+        }
 
 
         function generateProblem() {
@@ -388,6 +388,7 @@ function generateKellyProblem() {
             document.getElementById('configScreen').style.display = 'none';
             score = 0;
             timeLeft = gameTime;
+            timerDisplay.textContent = `Time: ${timeLeft}s`;
             isGameRunning = true;
             scoreDisplay.textContent = `Score: ${score}`;
             startBtn.style.display = 'none';
