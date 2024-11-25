@@ -127,6 +127,15 @@
                 display: block;
                 margin: 8px 0;
                 }
+                #addSubInputs, #multInputs, #kellyInputs {
+                    margin: 10px 0;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                }
+                #multInputs {
+                    margin-top: 20px;
+                }
                 .time-select {
                     margin-top: -6px;
                 white-space: nowrap;
@@ -150,14 +159,38 @@
             </div>
             <div class="range-select">
                 <div id="mathInputs">
-                    <label>
-                        Minimum Number:
-                        <input type="number" id="minNum" value="2" min="1" max="999">
-                    </label>
-                    <label>
-                        Maximum Number:
-                        <input type="number" id="maxNum" value="99" min="1" max="999">
-                    </label>
+                    <div id="addSubInputs">
+                        <center><strong>addition/subtraction</strong></center>
+                        <label>
+                            Min:
+                            <input type="number" id="minNum" value="2" min="1" max="999">
+                        </label>
+                        <label>
+                            Max:
+                            <input type="number" id="maxNum" value="100" min="1" max="999">
+                        </label>
+                    </div>
+                    <div id="multInputs">
+              <center>
+                          <strong>multiplication/division</strong>
+              </center>
+                        <label>
+                            First Factor Min:
+                            <input type="number" id="multLeftMin" value="2" min="1" max="999">
+                        </label>
+                        <label>
+                            First Factor Max:
+                            <input type="number" id="multLeftMax" value="12" min="1" max="999">
+                        </label>
+                        <label>
+                            Second Factor Min:
+                            <input type="number" id="multRightMin" value="2" min="1" max="999">
+                        </label>
+                        <label>
+                            Second Factor Max:
+                            <input type="number" id="multRightMax" value="100" min="1" max="999">
+                        </label>
+                    </div>
                 </div>
                 <div id="kellyInputs" style="display: none;">
                     <label>
@@ -206,7 +239,11 @@
         let isGameRunning = false;
         let selectedOperations = ['addition'];
         let minNumber = 2;
-        let maxNumber = 99;
+        let multLeftMin = 2;
+        let multLeftMax = 12;
+        let multRightMin = 2;
+        let multRightMax = 100;
+        let maxNumber = 100;
         let gameTime = 60;
         let isKellyMode = false;
 
@@ -244,11 +281,22 @@
             minNumber = parseInt(e.target.value);
         });
         document.getElementById('maxNum').addEventListener('change', (e) => {
-            });
-            
-            document.getElementById('timeInput').addEventListener('change', (e) => {
-                gameTime = parseInt(e.target.value);
             maxNumber = parseInt(e.target.value);
+        });
+        document.getElementById('multLeftMin').addEventListener('change', (e) => {
+            multLeftMin = parseInt(e.target.value);
+        });
+        document.getElementById('multLeftMax').addEventListener('change', (e) => {
+            multLeftMax = parseInt(e.target.value);
+        });
+        document.getElementById('multRightMin').addEventListener('change', (e) => {
+            multRightMin = parseInt(e.target.value);
+        });
+        document.getElementById('multRightMax').addEventListener('change', (e) => {
+            multRightMax = parseInt(e.target.value);
+        });
+        document.getElementById('timeInput').addEventListener('change', (e) => {
+            gameTime = parseInt(e.target.value);
         });
 
         const startBtn = document.getElementById('startBtn');
@@ -301,15 +349,16 @@ function generateKellyProblem() {
                     symbol = '-';
                     break;
                 case 'multiplication':
-                    num1 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
-                    num2 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
+                    num1 = getRandomNumber(multLeftMin, multLeftMax);
+                    num2 = getRandomNumber(multRightMin, multRightMax);
                     answer = num1 * num2;
                     symbol = '×';
                     break;
                 case 'division':
-                    num2 = getRandomNumber(minNumber, Math.min(maxNumber, 12));
-                    answer = getRandomNumber(minNumber, Math.min(maxNumber, 12));
-                    num1 = num2 * answer; // Ensure clean division
+                    // Create division problems by reversing multiplication
+                    num2 = getRandomNumber(multRightMin, multRightMax);
+                    num1 = getRandomNumber(multLeftMin, multLeftMax) * num2; // First generate the product
+                    answer = num1 / num2; // The answer will be the first random number we generated
                     symbol = '÷';
                     break;
             }
