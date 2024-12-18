@@ -217,7 +217,7 @@
                 <div class="time-select">
                     <label>
                         Time (seconds):
-                        <input type="number" id="timeInput" value="120" min="10" max="300">
+                        <input type="number" id="timeInput" value="120" min="-1" max="300">
                     </label>
                 </div>
             </div>
@@ -399,11 +399,15 @@
             displayProblem();
 
             timer = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = `Time: ${timeLeft}s`;
-                
-                if (timeLeft <= 0) {
-                    endGame();
+                if (timeLeft !== -1) {
+                    timeLeft--;
+                    timerDisplay.textContent = `Time: ${timeLeft}s`;
+                    
+                    if (timeLeft <= 0) {
+                        endGame();
+                    }
+                } else {
+                    timerDisplay.textContent = 'Infinite Time';
                 }
             }, 1000);
         }
