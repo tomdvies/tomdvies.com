@@ -1,3 +1,7 @@
+.center {
+	text-align:center;
+}
+
 /*body {
   color: #222;
   font-family: sans-serif;
@@ -55,11 +59,11 @@ html {
   border-radius: 5px;
 }*/
 body {
-    max-width: 1300px; /* Set a max-width to control the width of the body content */
-    width:90%;
+    max-width: 1500px; /* Increased max-width */
+    width: 90%;
     border-radius: 5px;
     margin: 2% auto; /* Center the body horizontally */
-    font-size: 95%;
+    font-size: 115%; /* Increased base font size */
     border: 1px solid gray; /* Add a thin gray border */
     padding: 1em 1em 0em 1em;
     box-sizing: border-box; /* Ensure padding and border are included in the element's width/height */
@@ -131,7 +135,7 @@ nav ul {
 }
 
 nav a {
-    font-size: 1.27em;
+    font-size: 1.3em;
     display: block;
     padding: 0px;
 }
