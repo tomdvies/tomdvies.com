@@ -203,7 +203,7 @@ blockquote {
 .hr {
   border: thin solid gray;
   border-width: thin 0px 0px 0px;
-  margin: 0 -1em; /* Negative margin to counteract the body padding */
+  /* margin: 0 -1em; /* Negative margin to counteract the body padding */ */
   /*height: 1px;
   /* Set the hr color */
   /*color: gray;  /* old IE */
