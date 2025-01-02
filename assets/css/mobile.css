@@ -1,6 +1,5 @@
 .center {
 	text-align:center;
-
 }
 
 /*body {
@@ -148,8 +147,9 @@ nav a {
 }
 
 .nav-right li {
-    float: right;
-    padding: 0px 0px 0px 3em;
+    display: block;
+    text-align: right;
+    padding: 0.1em 0;
     font-weight: bold; 
 }
 
