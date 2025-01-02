@@ -1,9 +1,28 @@
-{{- with resources.Get "css/main.css" }}
-  {{- if eq hugo.Environment "development" }}
-    <link rel="stylesheet" href="{{ .RelPermalink }}">
-  {{- else }}
-    {{- with . | minify | fingerprint }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
-    {{- end }}
-  {{- end }}
-{{- end }}
+<!-- {{- with resources.Get "css/main.css" }} -->
+<!--   {{- if eq hugo.Environment "development" }} -->
+<!--     <link rel="stylesheet" href="{{ .RelPermalink }}"> -->
+<!--   {{- else }} -->
+<!--     {{- with . | minify | fingerprint }} -->
+<!--       <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"> -->
+<!--     {{- end }} -->
+<!--   {{- end }} -->
+<!-- {{- end }} -->
+{{/* Process the CSS files */}}
+{{ $mainCSS := resources.Get "css/main.css" }}
+{{ $mobileCSS := resources.Get "css/mobile.css" }}
+
+{{/* Set variables for the processed paths */}}
+<script>
+    const mainCssPath = "{{ with $mainCSS }}{{ .RelPermalink }}{{ end }}";
+    const mobileCssPath = "{{ with $mobileCSS }}{{ .RelPermalink }}{{ end }}";
+</script>
+
+{{/* Initially load the desktop CSS - it will be switched by JS if needed */}}
+{{ with $mainCSS }}
+    {{ if eq hugo.Environment "development" }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" id="dynamic-css">
+    {{ else }}
+        {{ $css := . | minify | fingerprint }}
+        <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous" id="dynamic-css">
+    {{ end }}
+{{ end }}
