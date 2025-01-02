@@ -61,14 +61,16 @@ html {
 }*/
 body {
     max-width: 100%; /* Full width */
-    width: 100%;
-    margin: 0; /* Remove margins */
+    width: 97%;
+    margin: 2% auto; /* Remove margins */
     font-size: 100%; /* Standard base font size */
     padding: 1em 1em 0em 1em;
     box-sizing: border-box; /* Ensure padding and border are included in the element's width/height */
     font-family: "Cousine", monospace;
     background-color: white;
     color: #111;
+border: 1px solid gray; /* Match main.css border style */
+border-radius: 5px; /* Match main.css border radius */
 }
 [class*="col-"] {
   width: 100%;
