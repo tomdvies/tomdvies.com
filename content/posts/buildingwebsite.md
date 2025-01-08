@@ -68,11 +68,15 @@ block math:
 \[\lim_{x\to 0}\frac{\sin(x)}{\x} = 1\]
 ```
 is rendered as
-> ***inline math*** : 
+
+
+***inline math*** : 
 \(\int_{-\infty}^{\infty}e^{-x^2} dx = \sqrt{\pi}\)
->
-> ***block math***:
->\[\lim_{x\to 0}\frac{\sin(x)}{x} = 1\]
+
+***block math***:
+
+\[\lim_{x\to 0}\frac{\sin(x)}{x} = 1\]
+
 
 Note that if you refresh the page, there isn't the lag where you can see the raw latex that comes with rendering on the fly. Now that we have latex support setup we're half the way 
 to being done (this was the only "frill" I wanted my site to have). Now we can work on *themeing* the site.

@@ -3,6 +3,17 @@
 
 }
 
+.center_image {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.center_image img {
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
 /*body {
   color: #222;
   font-family: sans-serif;

@@ -3,6 +3,9 @@ title = 'Uncertainty Quantification via Split Conformal Prediction'
 date = 2024-12-15T08:00:00-07:00
 draft = true
 +++
+### Preface
+
+This text is based off 
 
 ### Motivation
 
@@ -40,6 +43,9 @@ The traditional approach, when we know the underlying distribution family, is to
 However, this approach comes with some significant caveats. What happens when our distributional assumptions don't match reality? We might encounter non-normal errors, non-constant variance, or even fundamental model misspecification. In these cases, our carefully constructed confidence intervals may no longer be valid.
 
 These results also need infinite amounts of data for the confidence interval to be valid, the issues with this I think are obvious...
+
+<!-- ![buzz](buzz.jpg) -->
+<!-- {.center_image} -->
 
 **But we can do better!**
 {.center}
