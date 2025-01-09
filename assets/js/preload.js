@@ -241,13 +241,18 @@ class InstantPage {
         event.preventDefault();
         this.isNavigating = true;
 
-        let content;
+        // Immediately use preloaded content if available
         if (this.preloadedContents.has(url)) {
-            content = this.preloadedContents.get(url);
-        } else {
-            content = await this.fetchPage(url);
+            const content = this.preloadedContents.get(url);
+            this.updatePageContent(content, url);
+            this.isNavigating = false;
+            // Start preloading the next page immediately
+            this.preloadedContents.delete(url);
+            return;
         }
 
+        // If not preloaded, fetch immediately
+        const content = await this.fetchPage(url);
         if (content) {
             this.updatePageContent(content, url);
         } else {
@@ -265,8 +270,20 @@ class InstantPage {
             if (this.isValidUrl(link.href)) {
                 // Remove existing listeners to prevent duplicates
                 link.removeEventListener('click', this._handleClickBound);
+                link.removeEventListener('mouseenter', this._handleMouseEnterBound);
+                
                 // Add click listener
-                link.addEventListener('click', (e) => this.handleClick(e, link));
+                this._handleClickBound = (e) => this.handleClick(e, link);
+                link.addEventListener('click', this._handleClickBound);
+                
+                // Add mouseenter listener for immediate preload
+                this._handleMouseEnterBound = () => {
+                    if (!this.preloadedContents.has(link.href) && !this.preloadRequested.has(link.href)) {
+                        this.preloadRequested.add(link.href);
+                        this.preloadLink(link.href);
+                    }
+                };
+                link.addEventListener('mouseenter', this._handleMouseEnterBound);
             }
         }
     }
