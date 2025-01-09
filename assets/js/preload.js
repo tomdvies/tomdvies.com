@@ -4,9 +4,12 @@
 class InstantPage {
     constructor(options = {}) {
         this.HOVER_THRESHOLD = options.hoverThreshold || 100;
+        this.DEBOUNCE_DELAY = options.debounceDelay || 100; // ms
         this.preloadedContents = new Map();
+        this.preloadRequested = new Set(); // Track URLs being preloaded
         this.currentUrl = window.location.href;
         this.isNavigating = false;
+        this.debounceTimer = null;
         
         // Create container for new content
         this.contentContainer = document.querySelector('main') || document.body;
@@ -101,10 +104,15 @@ class InstantPage {
             return;
         }
 
-        const content = await this.fetchPage(url);
-        if (content) {
-            this.preloadedContents.set(url, content);
-            this.log('Preloaded', url);
+        try {
+            const content = await this.fetchPage(url);
+            if (content) {
+                this.preloadedContents.set(url, content);
+                this.log('Preloaded', url);
+            }
+        } finally {
+            // Remove from requested set regardless of success/failure
+            this.preloadRequested.delete(url);
         }
     }
 
@@ -264,13 +272,25 @@ class InstantPage {
     }
 
     handleMouseMove(event) {
-        const links = document.getElementsByTagName('a');
-        
-        for (const link of links) {
-            if (this.isNearLink(event, link) && this.isValidUrl(link.href)) {
-                this.preloadLink(link.href);
-            }
+        // Clear existing timer
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
         }
+
+        // Set new timer
+        this.debounceTimer = setTimeout(() => {
+            const links = document.getElementsByTagName('a');
+            
+            for (const link of links) {
+                if (this.isNearLink(event, link) && 
+                    this.isValidUrl(link.href) && 
+                    !this.preloadRequested.has(link.href) && 
+                    !this.preloadedContents.has(link.href)) {
+                    this.preloadRequested.add(link.href);
+                    this.preloadLink(link.href);
+                }
+            }
+        }, this.DEBOUNCE_DELAY);
     }
 
     handlePopState() {
