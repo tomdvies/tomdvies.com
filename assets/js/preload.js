@@ -3,7 +3,7 @@
  */
 class InstantPage {
     constructor(options = {}) {
-        this.HOVER_THRESHOLD = options.hoverThreshold || 100;
+        this.HOVER_THRESHOLD = options.hoverThreshold || 200;
         this.DEBOUNCE_DELAY = options.debounceDelay || 100; // ms
         this.preloadedContents = new Map();
         this.preloadRequested = new Set(); // Track URLs being preloaded
@@ -241,18 +241,13 @@ class InstantPage {
         event.preventDefault();
         this.isNavigating = true;
 
-        // Immediately use preloaded content if available
+        let content;
         if (this.preloadedContents.has(url)) {
-            const content = this.preloadedContents.get(url);
-            this.updatePageContent(content, url);
-            this.isNavigating = false;
-            // Start preloading the next page immediately
-            this.preloadedContents.delete(url);
-            return;
+            content = this.preloadedContents.get(url);
+        } else {
+            content = await this.fetchPage(url);
         }
 
-        // If not preloaded, fetch immediately
-        const content = await this.fetchPage(url);
         if (content) {
             this.updatePageContent(content, url);
         } else {
@@ -270,20 +265,8 @@ class InstantPage {
             if (this.isValidUrl(link.href)) {
                 // Remove existing listeners to prevent duplicates
                 link.removeEventListener('click', this._handleClickBound);
-                link.removeEventListener('mouseenter', this._handleMouseEnterBound);
-                
                 // Add click listener
-                this._handleClickBound = (e) => this.handleClick(e, link);
-                link.addEventListener('click', this._handleClickBound);
-                
-                // Add mouseenter listener for immediate preload
-                this._handleMouseEnterBound = () => {
-                    if (!this.preloadedContents.has(link.href) && !this.preloadRequested.has(link.href)) {
-                        this.preloadRequested.add(link.href);
-                        this.preloadLink(link.href);
-                    }
-                };
-                link.addEventListener('mouseenter', this._handleMouseEnterBound);
+                link.addEventListener('click', (e) => this.handleClick(e, link));
             }
         }
     }
