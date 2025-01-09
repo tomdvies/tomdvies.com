@@ -1,120 +1,78 @@
-// Track which URLs have been preloaded to avoid duplicates
-const preloadedUrls = new Set();
 
-// Check if we're running on localhost
-const isLocalhost = window.location.hostname === 'localhost' 
-    || window.location.hostname === '127.0.0.1'
-    || window.location.protocol === 'file:';
+// Configuration
+const HOVER_THRESHOLD = 100; // Distance in pixels to trigger preload
+let preloadedUrls = new Set();
 
-// Logging utility with timestamp
-function logPreload(type, url, details = '') {
-    const timestamp = new Date().toLocaleTimeString();
-    const style = type === 'prerender' ? 'color: #e44d26' : 'color: #4CAF50';
-    console.log(
-        `%c[${timestamp}] ${type.toUpperCase()}: ${url} ${details}`,
-        `${style}; font-weight: bold;`
-    );
+// Logging function
+function logPreload(action, url) {
+    console.log(`[Preload] ${action}: ${url}`);
 }
 
-// Function to prerender a link
-function prerenderLink(href) {
-    if (!href || !href.startsWith(window.location.origin) || preloadedUrls.has(href)) {
+// Preload function
+function preloadLink(url) {
+    if (preloadedUrls.has(url)) {
+        logPreload('Already preloaded', url);
         return;
     }
 
-    // Remove any existing prerender for this URL
-    const existingPrerender = document.querySelector(`link[rel="prerender"][href="${href}"]`);
-    if (existingPrerender) {
-        existingPrerender.remove();
-    }
-
-    // Create new prerender link
+    // Create preload link
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'document';
+    link.href = url;
+    document.head.appendChild(link);
+    
+    // Create prerender link
     const prerenderLink = document.createElement('link');
     prerenderLink.rel = 'prerender';
-    prerenderLink.href = href;
-    
-    if (!isLocalhost) {
-        prerenderLink.addEventListener('load', () => {
-            logPreload('prerender', href, '✓ loaded');
-        });
-        prerenderLink.addEventListener('error', () => {
-            logPreload('prerender', href, '❌ failed');
-        });
-    } else {
-        // For localhost, just assume it worked
-        setTimeout(() => {
-            logPreload('prerender', href, '? assumed loaded (localhost)');
-        }, 100);
-    }
-    
+    prerenderLink.href = url;
     document.head.appendChild(prerenderLink);
-    preloadedUrls.add(href);
-    logPreload('prerender', href, 'started');
+
+    preloadedUrls.add(url);
+    logPreload('Preloaded and prerendered', url);
 }
 
-// Function to handle mouse proximity and hover
-function initializeLinkPrerendering() {
-    const links = document.querySelectorAll('a[href]');
+// Check if mouse is near a link
+function isNearLink(event, link) {
+    const rect = link.getBoundingClientRect();
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
     
-    links.forEach(link => {
-        // Prerender on hover
-        link.addEventListener('mouseenter', () => {
-            logPreload('hover', link.href, 'detected');
-            prerenderLink(link.href);
-        });
-
-        // Optional: Prerender on mouse getting near the link
-        document.addEventListener('mousemove', (e) => {
-            const rect = link.getBoundingClientRect();
-            const proximity = 50; // Distance in pixels to trigger prerender
-            
-            // Check if mouse is within proximity distance of the link
-            if (e.clientX >= rect.left - proximity &&
-                e.clientX <= rect.right + proximity &&
-                e.clientY >= rect.top - proximity &&
-                e.clientY <= rect.bottom + proximity) {
-                logPreload('proximity', link.href, 'detected');
-                prerenderLink(link.href);
-            }
-        }, { passive: true }); // Performance optimization
-    });
+    const distance = Math.sqrt(
+        Math.pow(mouseX - (rect.left + rect.width/2), 2) +
+        Math.pow(mouseY - (rect.top + rect.height/2), 2)
+    );
+    
+    return distance <= HOVER_THRESHOLD;
 }
 
-// Basic prefetch for all links initially
-function prefetchLinks() {
-    const links = document.querySelectorAll('a[href]');
-    const domain = window.location.origin;
-
-    links.forEach(link => {
-        const href = link.href;
-        if (href.startsWith(domain) && !preloadedUrls.has(href)) {
-            const prefetchLink = document.createElement('link');
-            prefetchLink.rel = 'prefetch';
-            prefetchLink.href = href;
-            
-            if (!isLocalhost) {
-                prefetchLink.addEventListener('load', () => {
-                    logPreload('prefetch', href, '✓ loaded');
-                });
-                prefetchLink.addEventListener('error', () => {
-                    logPreload('prefetch', href, '❌ failed');
-                });
-            } else {
-                // For localhost, just assume it worked
-                setTimeout(() => {
-                    logPreload('prefetch', href, '? assumed loaded (localhost)');
-                }, 100);
+// Initialize preload functionality
+document.addEventListener('DOMContentLoaded', () => {
+    logPreload('Initializing', 'preload system');
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+        const links = document.getElementsByTagName('a');
+        
+        for (const link of links) {
+            if (isNearLink(e, link) && link.href) {
+                // Don't preload if it's an anchor link or javascript: link
+                if (!link.href.startsWith('javascript:') && !link.href.includes('#')) {
+                    preloadLink(link.href);
+                }
             }
-            
-            document.head.appendChild(prefetchLink);
-            preloadedUrls.add(href);
-            logPreload('prefetch', href, 'started');
         }
     });
-}
-
-// Initialize everything when the page loads
-window.addEventListener('load', () => {
-    prefetchLinks(); // First, prefetch all links
-    initializeLinkPrerendering(); // Then set up prerendering
+    
+    // Also preload on touch for mobile devices
+    document.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        if (element && element.tagName === 'A' && element.href) {
+            if (!element.href.startsWith('javascript:') && !element.href.includes('#')) {
+                preloadLink(element.href);
+            }
+        }
+    });
 });
