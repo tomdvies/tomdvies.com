@@ -1,51 +1,20 @@
-
 /**
- * Advanced Link Preloader
- * Preloads pages when mouse approaches links and caches them for instant access
+ * InstantPage - Preloads and instantly switches pages within the same domain
  */
-class LinkPreloader {
+class InstantPage {
     constructor(options = {}) {
         this.HOVER_THRESHOLD = options.hoverThreshold || 100;
-        this.CACHE_NAME = 'page-cache';
-        this.preloadedUrls = new Set();
-        this.initialized = false;
+        this.preloadedContents = new Map();
+        this.currentUrl = window.location.href;
+        this.isNavigating = false;
+        
+        // Create container for new content
+        this.contentContainer = document.querySelector('main') || document.body;
+        this.init();
     }
 
     log(action, url) {
-        console.log(`[Preload] ${action}: ${url}`);
-    }
-
-    async preloadUrl(url) {
-        if (this.preloadedUrls.has(url)) {
-            this.log('Already preloaded', url);
-            return;
-        }
-
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'same-origin'
-            });
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            // Store in browser's cache
-            const cache = await caches.open(this.CACHE_NAME);
-            await cache.put(url, response.clone());
-
-            // Add prerender hint
-            const prerenderLink = document.createElement('link');
-            prerenderLink.rel = 'prerender';
-            prerenderLink.href = url;
-            document.head.appendChild(prerenderLink);
-
-            this.preloadedUrls.add(url);
-            this.log('Cached successfully', url);
-
-        } catch (error) {
-            this.log('Failed to preload', `${url} (${error.message})`);
-        }
+        console.log(`[InstantPage] ${action}: ${url}`);
     }
 
     isValidUrl(url) {
@@ -55,13 +24,13 @@ class LinkPreloader {
             const currentDomain = window.location.hostname;
             const urlObject = new URL(url);
             
-            return urlObject.hostname === currentDomain && // Same domain check
+            return urlObject.hostname === currentDomain && 
                    !url.startsWith('javascript:') && 
                    !url.includes('#') &&
                    !url.startsWith('mailto:') &&
                    !url.startsWith('tel:');
         } catch (e) {
-            return false; // Invalid URL format
+            return false;
         }
     }
 
@@ -76,67 +45,277 @@ class LinkPreloader {
         ) <= this.HOVER_THRESHOLD;
     }
 
+    // async fetchPage(url) {
+    //     try {
+    //         const response = await fetch(url, {
+    //             method: 'GET',
+    //             credentials: 'same-origin'
+    //         });
+    //
+    //         if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    //        
+    //         const html = await response.text();
+    //         const parser = new DOMParser();
+    //         const doc = parser.parseFromString(html, 'text/html');
+    //        
+    //         return {
+    //             title: doc.title,
+    //             content: doc.querySelector('main')?.innerHTML || doc.body.innerHTML,
+    //             doc: doc
+    //         };
+    //     } catch (error) {
+    //         this.log('Failed to fetch', `${url} (${error.message})`);
+    //         return null;
+    //     }
+    // }
+
+    async fetchPage(url) {
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            const mainContent = doc.querySelector('main') || doc.body;
+            
+            return {
+                title: doc.title,
+                content: mainContent.innerHTML,
+                head: doc.head,
+                doc: doc  // Keep the full document for reference
+            };
+        } catch (error) {
+            this.log('Failed to fetch', `${url} (${error.message})`);
+            return null;
+        }
+    }
+
+    async preloadLink(url) {
+        if (this.preloadedContents.has(url)) {
+            return;
+        }
+
+        const content = await this.fetchPage(url);
+        if (content) {
+            this.preloadedContents.set(url, content);
+            this.log('Preloaded', url);
+        }
+    }
+
+    // updatePageContent(content, url) {
+    //     // Update the page content
+    //     document.title = content.title;
+    //     this.contentContainer.innerHTML = content.content;
+    //
+    //     // Update URL without reload
+    //     window.history.pushState({}, content.title, url);
+    //     this.currentUrl = url;
+    //
+    //     // Trigger virtual page view for analytics
+    //     if (typeof gtag !== 'undefined') {
+    //         gtag('config', window.GA_MEASUREMENT_ID, {
+    //             page_path: window.location.pathname
+    //         });
+    //     }
+    //
+    //     // Re-attach event listeners to new content
+    //     this.attachLinkListeners();
+    //    
+    //     // Emit custom event
+    //     window.dispatchEvent(new CustomEvent('instantPageLoad', { 
+    //         detail: { url, title: content.title } 
+    //     }));
+    // }
+    updatePageContent(content, url) {
+        // Update the page content
+        document.title = content.title;
+        
+                // Update or remove header
+                const currentHeader = document.querySelector('header');
+                const newHeader = content.doc.querySelector('header');
+                
+                if (currentHeader) {
+                    if (newHeader) {
+                        currentHeader.innerHTML = newHeader.innerHTML;
+                    } else {
+                        currentHeader.remove();
+                    }
+                }
+        
+                // Update main content
+        this.contentContainer.innerHTML = content.content;
+
+        // Update head elements (CSS, JS, meta tags, etc.)
+        this.updateHeadElements(content.head);
+
+        // Update URL without reload
+        window.history.pushState({}, content.title, url);
+        this.currentUrl = url;
+
+        // Trigger virtual page view for analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('config', window.GA_MEASUREMENT_ID, {
+                page_path: window.location.pathname
+            });
+        }
+
+        // Re-attach event listeners to new content
+        this.attachLinkListeners();
+        
+        // Emit custom event
+        window.dispatchEvent(new CustomEvent('instantPageLoad', { 
+            detail: { url, title: content.title } 
+        }));
+    }
+
+    updateHeadElements(newHead) {
+        const currentHead = document.head;
+        
+        // Keep track of elements we want to preserve (like this script)
+        const preserveSelectors = [
+            'script[src*="preload.js"]',
+            'script[src*="googletagmanager.com"]',
+            'script[src*="google-analytics.com"]',
+            'link[href*="fonts.googleapis.com"]',
+            'link[href*="fonts.gstatic.com"]',
+            // Add other scripts/resources you want to preserve
+        ];
+        
+        // Store references to elements we want to preserve
+        const preservedElements = [];
+        preserveSelectors.forEach(selector => {
+            const elements = currentHead.querySelectorAll(selector);
+            elements.forEach(element => {
+                // Clone the element before removing it
+                const clone = element.cloneNode(true);
+                preservedElements.push(clone);
+            });
+        });
+
+        // Clear current head
+        while (currentHead.firstChild) {
+            currentHead.removeChild(currentHead.firstChild);
+        }
+
+        // Add all new head elements
+        Array.from(newHead.children).forEach(element => {
+            // Skip if this element should be preserved
+            const shouldPreserve = preserveSelectors.some(selector => 
+                element.matches(selector)
+            );
+            
+            if (!shouldPreserve) {
+                // Clone the element to avoid issues with moving nodes between documents
+                const clone = element.cloneNode(true);
+                currentHead.appendChild(clone);
+            }
+        });
+
+        // Re-add preserved elements
+        preservedElements.forEach(element => {
+            currentHead.appendChild(element);
+        });
+    }
+
+    async handleClick(event, link) {
+        const url = link.href;
+        
+        if (!this.isValidUrl(url) || this.isNavigating) {
+            return;
+        }
+
+        event.preventDefault();
+        this.isNavigating = true;
+
+        let content;
+        if (this.preloadedContents.has(url)) {
+            content = this.preloadedContents.get(url);
+        } else {
+            content = await this.fetchPage(url);
+        }
+
+        if (content) {
+            this.updatePageContent(content, url);
+        } else {
+            // Fallback to traditional navigation if fetch fails
+            window.location.href = url;
+        }
+
+        this.isNavigating = false;
+    }
+
+    attachLinkListeners() {
+        const links = document.getElementsByTagName('a');
+        
+        for (const link of links) {
+            if (this.isValidUrl(link.href)) {
+                // Remove existing listeners to prevent duplicates
+                link.removeEventListener('click', this._handleClickBound);
+                // Add click listener
+                link.addEventListener('click', (e) => this.handleClick(e, link));
+            }
+        }
+    }
+
     handleMouseMove(event) {
         const links = document.getElementsByTagName('a');
         
         for (const link of links) {
             if (this.isNearLink(event, link) && this.isValidUrl(link.href)) {
-                this.preloadUrl(link.href);
+                this.preloadLink(link.href);
             }
         }
     }
 
-    handleTouch(event) {
-        const touch = event.touches[0];
-        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-        
-        if (element?.tagName === 'A' && this.isValidUrl(element.href)) {
-            this.preloadUrl(element.href);
-        }
-    }
-
-    async setupCache() {
-        // Clean up old caches
-        const caches = await window.caches.keys();
-        await Promise.all(
-            caches.map(cache => {
-                if (cache !== this.CACHE_NAME) {
-                    return window.caches.delete(cache);
+    handlePopState() {
+        // Handle browser back/forward buttons
+        if (this.currentUrl !== window.location.href) {
+            this.isNavigating = true;
+            this.fetchPage(window.location.href).then((content) => {
+                if (content) {
+                    // Force header check on back/forward
+                    const newHeader = content.doc.querySelector('header');
+                    const currentHeader = document.querySelector('header');
+                    
+                    // If new page should have a header but we don't have one
+                    if (newHeader && !currentHeader) {
+                        // Create new header element
+                        const header = document.createElement('header');
+                        header.innerHTML = newHeader.innerHTML;
+                        document.body.insertBefore(header, document.body.firstChild);
+                    }
+                    
+                    this.updatePageContent(content, window.location.href);
+                } else {
+                    window.location.reload();
                 }
-            })
-        );
-
-        // Set up cache listener
-        window.addEventListener('fetch', async (event) => {
-            const cachedResponse = await caches.match(event.request);
-            if (cachedResponse) {
-                this.log('Serving from cache', event.request.url);
-                return cachedResponse;
-            }
-            return fetch(event.request);
-        });
+                this.isNavigating = false;
+            });
+        }
     }
 
     init() {
-        if (this.initialized) return;
-        
-        this.log('Initializing', 'preload system');
-        
-        // Set up event listeners
+        // Track mouse movement for preloading
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        document.addEventListener('touchstart', this.handleTouch.bind(this));
         
-        // Initialize cache
-        this.setupCache().catch(error => {
-            console.error('Cache setup failed:', error);
-        });
+        // Handle browser back/forward
+        window.addEventListener('popstate', this.handlePopState.bind(this));
+        
+        // Initial link listeners
+        this.attachLinkListeners();
 
-        this.initialized = true;
+        this.log('Initialized', 'instant page system');
     }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const preloader = new LinkPreloader();
-    preloader.init();
+    window.instantPage = new InstantPage();
 });
+
