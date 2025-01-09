@@ -1,78 +1,142 @@
 
-// Configuration
-const HOVER_THRESHOLD = 100; // Distance in pixels to trigger preload
-let preloadedUrls = new Set();
-
-// Logging function
-function logPreload(action, url) {
-    console.log(`[Preload] ${action}: ${url}`);
-}
-
-// Preload function
-function preloadLink(url) {
-    if (preloadedUrls.has(url)) {
-        logPreload('Already preloaded', url);
-        return;
+/**
+ * Advanced Link Preloader
+ * Preloads pages when mouse approaches links and caches them for instant access
+ */
+class LinkPreloader {
+    constructor(options = {}) {
+        this.HOVER_THRESHOLD = options.hoverThreshold || 100;
+        this.CACHE_NAME = 'page-cache';
+        this.preloadedUrls = new Set();
+        this.initialized = false;
     }
 
-    // Create preload link
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'document';
-    link.href = url;
-    document.head.appendChild(link);
-    
-    // Create prerender link
-    const prerenderLink = document.createElement('link');
-    prerenderLink.rel = 'prerender';
-    prerenderLink.href = url;
-    document.head.appendChild(prerenderLink);
+    log(action, url) {
+        console.log(`[Preload] ${action}: ${url}`);
+    }
 
-    preloadedUrls.add(url);
-    logPreload('Preloaded and prerendered', url);
-}
+    async preloadUrl(url) {
+        if (this.preloadedUrls.has(url)) {
+            this.log('Already preloaded', url);
+            return;
+        }
 
-// Check if mouse is near a link
-function isNearLink(event, link) {
-    const rect = link.getBoundingClientRect();
-    const mouseX = event.clientX;
-    const mouseY = event.clientY;
-    
-    const distance = Math.sqrt(
-        Math.pow(mouseX - (rect.left + rect.width/2), 2) +
-        Math.pow(mouseY - (rect.top + rect.height/2), 2)
-    );
-    
-    return distance <= HOVER_THRESHOLD;
-}
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'same-origin'
+            });
 
-// Initialize preload functionality
-document.addEventListener('DOMContentLoaded', () => {
-    logPreload('Initializing', 'preload system');
-    
-    // Track mouse movement
-    document.addEventListener('mousemove', (e) => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            // Store in browser's cache
+            const cache = await caches.open(this.CACHE_NAME);
+            await cache.put(url, response.clone());
+
+            // Add prerender hint
+            const prerenderLink = document.createElement('link');
+            prerenderLink.rel = 'prerender';
+            prerenderLink.href = url;
+            document.head.appendChild(prerenderLink);
+
+            this.preloadedUrls.add(url);
+            this.log('Cached successfully', url);
+
+        } catch (error) {
+            this.log('Failed to preload', `${url} (${error.message})`);
+        }
+    }
+
+    isValidUrl(url) {
+        if (!url) return false;
+        
+        try {
+            const currentDomain = window.location.hostname;
+            const urlObject = new URL(url);
+            
+            return urlObject.hostname === currentDomain && // Same domain check
+                   !url.startsWith('javascript:') && 
+                   !url.includes('#') &&
+                   !url.startsWith('mailto:') &&
+                   !url.startsWith('tel:');
+        } catch (e) {
+            return false; // Invalid URL format
+        }
+    }
+
+    isNearLink(event, link) {
+        const rect = link.getBoundingClientRect();
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
+        
+        return Math.hypot(
+            mouseX - (rect.left + rect.width/2),
+            mouseY - (rect.top + rect.height/2)
+        ) <= this.HOVER_THRESHOLD;
+    }
+
+    handleMouseMove(event) {
         const links = document.getElementsByTagName('a');
         
         for (const link of links) {
-            if (isNearLink(e, link) && link.href) {
-                // Don't preload if it's an anchor link or javascript: link
-                if (!link.href.startsWith('javascript:') && !link.href.includes('#')) {
-                    preloadLink(link.href);
-                }
+            if (this.isNearLink(event, link) && this.isValidUrl(link.href)) {
+                this.preloadUrl(link.href);
             }
         }
-    });
-    
-    // Also preload on touch for mobile devices
-    document.addEventListener('touchstart', (e) => {
-        const touch = e.touches[0];
+    }
+
+    handleTouch(event) {
+        const touch = event.touches[0];
         const element = document.elementFromPoint(touch.clientX, touch.clientY);
         
-        if (element && element.tagName === 'A' && element.href) {
-            if (!element.href.startsWith('javascript:') && !element.href.includes('#')) {
-                preloadLink(element.href);
-            }
+        if (element?.tagName === 'A' && this.isValidUrl(element.href)) {
+            this.preloadUrl(element.href);
         }
-    });
+    }
+
+    async setupCache() {
+        // Clean up old caches
+        const caches = await window.caches.keys();
+        await Promise.all(
+            caches.map(cache => {
+                if (cache !== this.CACHE_NAME) {
+                    return window.caches.delete(cache);
+                }
+            })
+        );
+
+        // Set up cache listener
+        window.addEventListener('fetch', async (event) => {
+            const cachedResponse = await caches.match(event.request);
+            if (cachedResponse) {
+                this.log('Serving from cache', event.request.url);
+                return cachedResponse;
+            }
+            return fetch(event.request);
+        });
+    }
+
+    init() {
+        if (this.initialized) return;
+        
+        this.log('Initializing', 'preload system');
+        
+        // Set up event listeners
+        document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        document.addEventListener('touchstart', this.handleTouch.bind(this));
+        
+        // Initialize cache
+        this.setupCache().catch(error => {
+            console.error('Cache setup failed:', error);
+        });
+
+        this.initialized = true;
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    const preloader = new LinkPreloader();
+    preloader.init();
 });
