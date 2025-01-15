@@ -1,7 +1,7 @@
 ---
 title: 'Implementing curve agnostic Elliptic Curve Signatures from scratch in Rust'
 date: 2024-09-01
-draft: false
+draft: true
 summary: |
     If Bob wants to talk to Alice over an insecure channel, can he guarantee the messages come from her?
     The answer is yes, one method for achieving this is the Elliptic Curve Digital Signature Algorithm (ECDSA).
